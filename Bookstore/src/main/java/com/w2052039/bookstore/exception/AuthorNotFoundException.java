@@ -2,12 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.w2052039.exception.mappers;
+package com.w2052039.bookstore.exception;
 
 /**
  *
  * @author Wolf_Wizard
  */
-public class CartNotFoundExceptionMapper {
+public class AuthorNotFoundException extends RuntimeException {
+    
+    public AuthorNotFoundException(String message) {
+        super(message);
+    }
     
 }

@@ -2,12 +2,16 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.w2052039.model;
+package com.w2052039.bookstore.exception;
 
 /**
  *
  * @author Wolf_Wizard
  */
-public class Order {
+public class OutOfStockException extends RuntimeException {
+    
+    public OutOfStockException(String message) {
+        super(message);
+    }
     
 }
