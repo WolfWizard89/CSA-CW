@@ -66,6 +66,16 @@ public class CartResource {
         book.setStock(book.getStock() - item.getQuantity());
         return Response.status(Response.Status.CREATED).entity(cart).build();
     }
+    /*
+     *
+     * Example JSON for adding an item to the cart:
+     {
+    "book": {
+            "id": 3
+            },
+    "quantity": 3
+    }
+     */
 
     @GET
     public Cart getCart(@PathParam("customerId") int customerId) {
@@ -98,8 +108,13 @@ public class CartResource {
         if (book.getStock() + cart.getItems().get(bookId).getQuantity() < item.getQuantity()) {
             throw new OutOfStockException("Not enough stock for book with ID " + bookId + ".");
         }
+        
+        if (item.getQuantity() > cart.getItems().get(bookId).getQuantity()) {
+            book.setStock(book.getStock() - (item.getQuantity() - cart.getItems().get(bookId).getQuantity()));
+        } else {
+            book.setStock(book.getStock() + (cart.getItems().get(bookId).getQuantity() - item.getQuantity()));
+        }
         cart.getItems().get(bookId).setQuantity(item.getQuantity());
-        book.setStock(book.getStock() + cart.getItems().get(bookId).getQuantity() - item.getQuantity());
         return Response.status(Response.Status.OK).entity(cart).build();
     }
 
@@ -115,8 +130,9 @@ public class CartResource {
         if (book == null) {
             throw new BookNotFoundException("Book with ID " + bookId + " not found.");
         }
+        int quantity = cart.getItems().get(bookId).getQuantity();
         cart.getItems().remove(bookId);
-        book.setStock(book.getStock() + cart.getItems().get(bookId).getQuantity());
+        book.setStock(book.getStock() + quantity);
         return Response.status(Response.Status.NO_CONTENT).build();
     }
 

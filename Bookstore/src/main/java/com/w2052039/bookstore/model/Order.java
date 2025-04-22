@@ -4,7 +4,9 @@
  */
 package com.w2052039.bookstore.model;
 
+import java.util.Date;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 /**
  *
@@ -16,11 +18,13 @@ public class Order {
     private int customerId;
     private List<CartItem> items;
     private double totalPrice;
-    private String orderDate;
+    
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss", timezone = "Asia/Colombo")
+    private Date orderDate;
 
     public Order() {}
 
-    public Order(int id, int customerId, List<CartItem> items, double totalPrice, String orderDate) {
+    public Order(int id, int customerId, List<CartItem> items, double totalPrice, Date orderDate) {
         this.id = id;
         this.customerId = customerId;
         this.items = items;
@@ -52,10 +56,10 @@ public class Order {
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
-    public String getOrderDate() {
+    public Date getOrderDate() {
         return orderDate;
     }
-    public void setOrderDate(String orderDate) {
+    public void setOrderDate(Date orderDate) {
         this.orderDate = orderDate;
     }
     
