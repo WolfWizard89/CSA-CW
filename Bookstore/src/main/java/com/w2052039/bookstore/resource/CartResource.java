@@ -35,105 +35,108 @@ public class CartResource {
         }
     }
 
+    // Post method to add an item to the cart
+    // It takes a customer ID and a CartItem object as input and returns a Response object
     @POST
     @Path("/items")
     public Response addItemToCart(@PathParam("customerId") int customerId, CartItem item) {
-        validateCustomer(customerId);
+        validateCustomer(customerId); // Validate customer ID
 
         if (item == null || item.getBook() == null) {
-            throw new InvalidInputException("Invalid cart item provided.");
+            throw new InvalidInputException("Invalid cart item provided."); //Exception for invalid input
         }
         
-        int bookId = item.getBook().getId();
-        Book book = DataStore.books.get(bookId);
+        int bookId = item.getBook().getId(); // Get the book ID from the CartItem object
+        Book book = DataStore.books.get(bookId); // Retrieve the book from the DataStore books map using the provided ID
         if (book == null) {
-            throw new BookNotFoundException("Book with ID " + bookId + " not found.");
+            throw new BookNotFoundException("Book with ID " + bookId + " not found."); //Exception for book not found
         }
         if (book.getStock() < item.getQuantity()) {
-            throw new OutOfStockException("Not enough stock for book with ID " + bookId + ".");
+            throw new OutOfStockException("Not enough stock for book with ID " + bookId + "."); //Exception for out of stock
         }
         if (item.getQuantity() <= 0) {
-            throw new InvalidInputException("Quantity must be greater than zero.");
+            throw new InvalidInputException("Quantity must be greater than zero."); //Exception for invalid quantity
         }
-        Cart cart = DataStore.carts.computeIfAbsent(customerId, k -> new Cart(customerId));
-        Map<Integer, CartItem> items = cart.getItems();
+        Cart cart = DataStore.carts.computeIfAbsent(customerId, k -> new Cart(customerId)); // Create a new cart if it doesn't exist
+        Map<Integer, CartItem> items = cart.getItems(); // Get the items in the cart
         if (items.containsKey(bookId)) {
-            CartItem existingItem = items.get(bookId);
-            existingItem.setQuantity(existingItem.getQuantity() + item.getQuantity());
+            CartItem existingItem = items.get(bookId); // Get the existing item in the cart
+            existingItem.setQuantity(existingItem.getQuantity() + item.getQuantity()); // Update the quantity of the existing item
         } else {
-            items.put(bookId, new CartItem(book, item.getQuantity()));
+            items.put(bookId, new CartItem(book, item.getQuantity())); // Add the new item to the cart
         }
-        book.setStock(book.getStock() - item.getQuantity());
-        return Response.status(Response.Status.CREATED).entity(cart).build();
+        book.setStock(book.getStock() - item.getQuantity()); // Decrease the stock of the book
+        return Response.status(Response.Status.CREATED).entity(cart).build(); // Return a response with status 201 (Created) and the updated cart object
     }
-    /*
-     *
-     * Example JSON for adding an item to the cart:
-     {
-    "book": {
-            "id": 3
-            },
-    "quantity": 3
-    }
-     */
-
+    
+    // Get method to retrieve the cart for a specific customer
+    // It takes a customer ID as a path parameter and returns the Cart object
     @GET
     public Cart getCart(@PathParam("customerId") int customerId) {
-        validateCustomer(customerId);
-        Cart cart = DataStore.carts.get(customerId);
+        validateCustomer(customerId); // Validate customer ID
+        Cart cart = DataStore.carts.get(customerId); // Retrieve the cart from the DataStore carts map using the provided customer ID
         if (cart == null) {
-            throw new CartNotFoundException("Cart for customer with ID " + customerId + " not found.");
+            throw new CartNotFoundException("Cart for customer with ID " + customerId + " not found."); //Exception for cart not found
         }
         return cart;
     }
 
+    // Get method to retrieve a specific item from the cart
+    // It takes a customer ID and a book ID as path parameters and returns the CartItem object
     @PUT
     @Path("/items/{bookId}")
     public Response updateCartItem(@PathParam("customerId") int customerId, @PathParam("bookId") int bookId, CartItem item) {
-        validateCustomer(customerId);
-        Cart cart = DataStore.carts.get(customerId);
+        validateCustomer(customerId); // Validate customer ID
+        Cart cart = DataStore.carts.get(customerId); // Retrieve the cart from the DataStore carts map using the provided customer ID
+        Book book = DataStore.books.get(bookId); // Retrieve the book from the DataStore books map using the provided book ID
         if (cart == null) {
-            throw new CartNotFoundException("Cart for customer with ID " + customerId + " not found.");
+            throw new CartNotFoundException("Cart for customer with ID " + customerId + " not found."); //Exception for cart not found
+        }
+        if (book == null) { 
+            throw new BookNotFoundException("Book with ID " + bookId + " not found."); //Exception for book not found
         }
         if (!cart.getItems().containsKey(bookId)) {
-            throw new BookNotFoundException("Book with ID " + bookId + " not found in cart.");
-        }
-        Book book = DataStore.books.get(bookId);
-        if (book == null) {
-            throw new BookNotFoundException("Book with ID " + bookId + " not found.");
+            throw new BookNotFoundException("Book with ID " + bookId + " not found in cart."); //Exception for book not found in cart
         }
         if (item.getQuantity() <= 0) {
-            throw new InvalidInputException("Quantity must be greater than zero.");
+            throw new InvalidInputException("Quantity must be greater than zero."); //Exception for invalid quantity
         }
         if (book.getStock() + cart.getItems().get(bookId).getQuantity() < item.getQuantity()) {
-            throw new OutOfStockException("Not enough stock for book with ID " + bookId + ".");
+            throw new OutOfStockException("Not enough stock for book with ID " + bookId + "."); //Exception for out of stock
         }
         
         if (item.getQuantity() > cart.getItems().get(bookId).getQuantity()) {
-            book.setStock(book.getStock() - (item.getQuantity() - cart.getItems().get(bookId).getQuantity()));
+            book.setStock(book.getStock() - (item.getQuantity() - cart.getItems().get(bookId).getQuantity())); // Decrease the stock of the book
         } else {
-            book.setStock(book.getStock() + (cart.getItems().get(bookId).getQuantity() - item.getQuantity()));
+            book.setStock(book.getStock() + (cart.getItems().get(bookId).getQuantity() - item.getQuantity())); // Increase the stock of the book
         }
-        cart.getItems().get(bookId).setQuantity(item.getQuantity());
-        return Response.status(Response.Status.OK).entity(cart).build();
+        cart.getItems().get(bookId).setQuantity(item.getQuantity()); // Update the quantity of the item in the cart
+        return Response.status(Response.Status.OK).entity(cart).build(); // Return a response with status 200 (OK) and the updated cart object
     }
 
+    // Delete method to remove an item from the cart
+    // It takes a customer ID and a book ID as path parameters and returns a Response object
     @DELETE
     @Path("/items/{bookId}")
     public Response removeItemFromCart(@PathParam("customerId") int customerId, @PathParam("bookId") int bookId) {
-        validateCustomer(customerId);
-        Cart cart = DataStore.carts.get(customerId);
-        if (cart == null || !cart.getItems().containsKey(bookId)) {
-            throw new InvalidInputException("Cart for customer with ID " + customerId + " not found.");
+        validateCustomer(customerId); // Validate customer ID
+        Cart cart = DataStore.carts.get(customerId); // Retrieve the cart from the DataStore carts map using the provided customer ID
+        Book book = DataStore.books.get(bookId); // Retrieve the book from the DataStore books map using the provided book ID
+        if (cart == null) {
+            throw new InvalidInputException("Cart for customer with ID " + customerId + " not found."); //Exception for cart not found
         }
-        Book book = DataStore.books.get(bookId);
+        
         if (book == null) {
-            throw new BookNotFoundException("Book with ID " + bookId + " not found.");
+            throw new BookNotFoundException("Book with ID " + bookId + " not found."); //Exception for book not found
         }
-        int quantity = cart.getItems().get(bookId).getQuantity();
-        cart.getItems().remove(bookId);
-        book.setStock(book.getStock() + quantity);
-        return Response.status(Response.Status.NO_CONTENT).build();
+        CartItem cartItem = cart.getItems().get(bookId);
+        if (cartItem == null) {
+            throw new BookNotFoundException("Book with ID " + bookId + " not found in cart."); //Exception for book not found in cart
+        }
+        int quantity = cartItem.getQuantity(); // Get the quantity of the item in the cart
+        cart.getItems().remove(bookId);     // Remove the item from the cart
+        book.setStock(book.getStock() + quantity); // Increase the stock of the book
+        return Response.status(Response.Status.NO_CONTENT).build(); // Return a response with status 204 (No Content) indicating successful deletion
     }
 
 

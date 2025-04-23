@@ -15,20 +15,21 @@ import java.util.Map;
 
 public class DataStore {
     
-    public static Map<Integer, Author> authors = new HashMap<>();
-    public static Map<Integer, Book> books = new HashMap<>();
-    public static Map<Integer, Customer> customers = new HashMap<>();
-    public static Map<Integer, Cart> carts = new HashMap<>();
-    public static Map<Integer, Order> orders = new HashMap<>();
+    public static Map<Integer, Author> authors = new HashMap<>();      // Map to store authors	
+    public static Map<Integer, Book> books = new HashMap<>();          // Map to store books
+    public static Map<Integer, Customer> customers = new HashMap<>();  // Map to store customers	
+    public static Map<Integer, Cart> carts = new HashMap<>();          // Map to store carts
+    public static Map<Integer, Order> orders = new HashMap<>();        // Map to store orders
 
 
-    public static int nextAuthorId = 1;
-    public static int nextBookId = 1;
-    public static int nextCustomerId = 1;
-    public static int nextOrderId = 1;
+    public static int nextAuthorId = 1;   // Next available author ID
+    public static int nextBookId = 1;     // Next available book ID
+    public static int nextCustomerId = 1; // Next available customer ID
+    public static int nextOrderId = 1;    // Next available order ID
 
     static{
 
+        // Sample data for authors, books, and customers
         Author author1 = new Author(nextAuthorId++, "J.K. Rowling", "British author, best known for the Harry Potter series.");
         Author author2 = new Author(nextAuthorId++, "George R.R. Martin", "American novelist and short story writer, known for 'A Song of Ice and Fire'.");
         authors.put(author1.getId(), author1);
