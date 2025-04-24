@@ -32,8 +32,10 @@ public class DataStore {
         // Sample data for authors, books, and customers
         Author author1 = new Author(nextAuthorId++, "J.K. Rowling", "British author, best known for the Harry Potter series.");
         Author author2 = new Author(nextAuthorId++, "George R.R. Martin", "American novelist and short story writer, known for 'A Song of Ice and Fire'.");
+        Author author3 = new Author(nextAuthorId++, "J.R.R. Tolkien", "English writer, best known for 'The Hobbit' and 'The Lord of the Rings'.");
         authors.put(author1.getId(), author1);
         authors.put(author2.getId(), author2);
+        authors.put(author3.getId(), author3);
         
         Book book1 = new Book(nextBookId++, "Harry Potter and the Philosopher's Stone", author1.getId(), author1.getName(), "9780747532699", 1997, 20.99, 100);
         Book book2 = new Book(nextBookId++, "Harry Potter and the Chamber of Secrets", author1.getId(), author1.getName(), "9780747538493", 1998, 22.99, 80);
@@ -46,8 +48,10 @@ public class DataStore {
 
         Customer customer1 = new Customer(nextCustomerId++, "John Doe", "john.doe@example.com", "password123");
         Customer customer2 = new Customer(nextCustomerId++, "Jane Smith", "jane.smith@example.com", "password456");
+        Customer customer3 = new Customer(nextCustomerId++, "Lara Argento", "lara.argento@example.com", "password789");
         customers.put(customer1.getId(), customer1);
         customers.put(customer2.getId(), customer2);
+        customers.put(customer3.getId(), customer3);
 
     }
 
