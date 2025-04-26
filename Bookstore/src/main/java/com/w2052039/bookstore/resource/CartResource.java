@@ -22,6 +22,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
+import java.util.List;
 
 
 @Path("/customers/{customerId}/cart")
@@ -39,7 +40,7 @@ public class CartResource {
     // It takes a customer ID and a CartItem object as input and returns a Response object
     @POST
     @Path("/items")
-    public Response addItemToCart(@PathParam("customerId") int customerId, java.util.List<CartItem> itemsToAdd) {
+    public Response addItemToCart(@PathParam("customerId") int customerId, List<CartItem> itemsToAdd) {
         validateCustomer(customerId); // Validate customer ID
 
         if (itemsToAdd == null || itemsToAdd.isEmpty()) {
@@ -130,7 +131,7 @@ public class CartResource {
         Cart cart = DataStore.carts.get(customerId); // Retrieve the cart from the DataStore carts map using the provided customer ID
         Book book = DataStore.books.get(bookId); // Retrieve the book from the DataStore books map using the provided book ID
         if (cart == null) {
-            throw new InvalidInputException("Cart for customer with ID " + customerId + " not found."); //Exception for cart not found
+            throw new CustomerNotFoundException("Cart for customer with ID " + customerId + " not found."); //Exception for cart not found
         }
         
         if (book == null) {
